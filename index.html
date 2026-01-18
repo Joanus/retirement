@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f1b2e" />
+  <title>悠然王國職業占卜｜退休規劃心理測驗</title>
+
+  <!-- Fonts (optional; if blocked, will fallback) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --ink:#2E2A3A;
+      --paper:#F6F4EF;
+      --paper2:#E9E3D7;
+      --lav:#6A5ACD;
+      --honey:#FFB86B;
+      --teal:#67C5B5;
+      --rose:#F28DB2;
+      --shadow: 0 14px 45px rgba(0,0,0,.22);
+      --radius:16px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:"Noto Sans TC", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--paper);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,184,107,.22), transparent 60%),
+        radial-gradient(900px 700px at 80% 30%, rgba(106,90,205,.22), transparent 60%),
+        radial-gradient(1000px 800px at 40% 90%, rgba(103,197,181,.12), transparent 60%),
+        linear-gradient(180deg, #171327 0%, #120f22 45%, #0d0b18 100%);
+      overflow-x:hidden;
+    }
+
+    /* safe area */
+    .safe{
+      padding: max(16px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+               max(18px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    }
+
+    .wrap{
+      max-width: 860px;
+      margin: 0 auto;
+      min-height: 100%;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 6px 2px 0;
+      opacity:.95;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand .title{
+      font-family:"Noto Serif TC", serif;
+      font-weight:700;
+      letter-spacing:.5px;
+      font-size: clamp(18px, 2.6vw, 22px);
+    }
+    .brand .sub{
+      font-size: 12px;
+      opacity:.78;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(246,244,239,.10);
+      border:1px solid rgba(246,244,239,.18);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+
+    main{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      padding-bottom: 12px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: rgba(246,244,239,.08);
+      border: 1px solid rgba(246,244,239,.16);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    /* image frame */
+    .hero{
+      width:100%;
+      aspect-ratio: 3 / 4; /* portraits */
+      background: rgba(0,0,0,.12);
+      position:relative;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    .hero img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.01);
+      filter: saturate(1.02) contrast(1.02);
+    }
+    .hero .fade{
+      position:absolute; inset:auto 0 0 0; height:28%;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.40) 100%);
+      pointer-events:none;
+    }
+
+    /* content panel under image (avoid text overlaying on image) */
+    .panel{
+      padding: 14px 14px 16px;
+      background:
+        linear-gradient(180deg, rgba(246,244,239,.12) 0%, rgba(246,244,239,.08) 100%);
+    }
+
+    .qmeta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .qnum{
+      font-family:"Noto Serif TC", serif;
+      font-weight:700;
+      font-size: clamp(16px, 2.6vw, 20px);
+      letter-spacing:.5px;
+    }
+
+    .progress{
+      font-size:12px;
+      opacity:.8;
+    }
+
+    .qtext{
+      color: rgba(246,244,239,.95);
+      line-height:1.55;
+      font-size: clamp(18px, 2.9vw, 22px); /* bigger for 20-50 audience */
+      font-weight:600;
+      margin: 6px 0 12px;
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 720px){
+      .choices{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      text-align:left;
+      border-radius: 14px;
+      padding: 14px 14px;
+      background: rgba(246,244,239,.12);
+      border:1px solid rgba(246,244,239,.20);
+      color: rgba(246,244,239,.96);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size: clamp(16px, 2.6vw, 18px);
+      line-height:1.35;
+      min-height: 54px;
+    }
+    .btn:hover{ transform: translateY(-2px); background: rgba(246,244,239,.16); border-color: rgba(255,184,107,.38); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn .tag{
+      display:inline-block;
+      width: 26px;
+      height:26px;
+      border-radius: 8px;
+      background: rgba(255,184,107,.18);
+      border:1px solid rgba(255,184,107,.30);
+      color: rgba(255,232,205,.95);
+      font-weight:800;
+      text-align:center;
+      line-height:24px;
+      margin-right:10px;
+      font-size: 14px;
+      vertical-align:middle;
+    }
+
+    /* footer nav */
+    .nav{
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+      padding: 10px 12px 12px;
+      background: rgba(0,0,0,.12);
+      border-top: 1px solid rgba(246,244,239,.14);
+    }
+    .nav .left, .nav .right{
+      display:flex; gap:10px; align-items:center;
+    }
+
+    .ghost{
+      background: transparent;
+      border: 1px solid rgba(246,244,239,.22);
+      color: rgba(246,244,239,.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size: 14px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .ghost:hover{ transform: translateY(-2px); background: rgba(246,244,239,.10); border-color: rgba(103,197,181,.35); }
+    .ghost:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+
+    .primary{
+      background: rgba(255,184,107,.18);
+      border: 1px solid rgba(255,184,107,.35);
+    }
+    .primary:hover{ border-color: rgba(255,184,107,.55); }
+
+    /* intro / result */
+    .center{
+      text-align:center;
+      padding: 18px 16px 18px;
+    }
+    .h1{
+      font-family:"Noto Serif TC", serif;
+      font-weight:800;
+      font-size: clamp(24px, 4.2vw, 36px);
+      line-height:1.15;
+      margin: 4px 0 10px;
+    }
+    .p{
+      font-size: clamp(16px, 2.7vw, 18px);
+      line-height:1.7;
+      opacity:.92;
+      margin: 0 auto 16px;
+      max-width: 44ch;
+    }
+
+    .ctaRow{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .badgeRow{
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 10px;
+      opacity:.95;
+    }
+    .miniBadge{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius:999px;
+      background: rgba(246,244,239,.10);
+      border:1px solid rgba(246,244,239,.16);
+    }
+
+    .resultBox{
+      margin-top: 10px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      background: rgba(246,244,239,.10);
+      border:1px solid rgba(246,244,239,.18);
+      text-align:left;
+    }
+    .resultBox h3{
+      margin: 0 0 8px;
+      font-family:"Noto Serif TC", serif;
+      font-size: 20px;
+    }
+    .resultBox p{
+      margin: 0;
+      line-height:1.75;
+      font-size: 16px;
+      opacity:.95;
+    }
+
+    /* loading */
+    .loading{
+      display:flex; align-items:center; justify-content:center;
+      gap:10px; padding: 18px; opacity:.9;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: rgba(255,184,107,.75);
+      animation: b 1.1s infinite ease-in-out;
+    }
+    .dot:nth-child(2){ animation-delay:.15s; background: rgba(106,90,205,.75); }
+    .dot:nth-child(3){ animation-delay:.3s; background: rgba(103,197,181,.75); }
+    @keyframes b{
+      0%, 80%, 100%{ transform: translateY(0); opacity:.55; }
+      40%{ transform: translateY(-6px); opacity:1; }
+    }
+
+    a{ color: rgba(255,184,107,.95); }
+    .small{ font-size:12px; opacity:.75; }
+  </style>
+</head>
+
+<body>
+  <div class="safe">
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <div class="title">悠然王國職業占卜</div>
+          <div class="sub">一場「沒有薪水的人生」的小小心理測驗</div>
+        </div>
+        <div class="pill" id="topPill">尚未開始</div>
+      </header>
+
+      <main id="app">
+        <!-- content injected by JS -->
+      </main>
+
+      <div class="small" style="text-align:center; opacity:.7; padding-bottom:6px;">
+        © 你的專案｜插畫風格：溫暖奇幻 × 紙感水彩（本頁為單檔 HTML，可自行修改）
+      </div>
+    </div>
+  </div>
+
+<script>
+/** ========== DATA ========== **/
+const questions = [
+  {
+    id: 1,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4418.png",
+    text: "黎明時分，你站在魔法陣上，面前分岔出四條道路。你會先走向哪一條？",
+    choices: [
+      { k:"A", t:"一道光芒四射、晶石巨大的峽谷" },
+      { k:"B", t:"有規律滴答聲、湧泉流過的小林道" },
+      { k:"C", t:"風聲呼嘯、風帆不停轉動的高坡道" },
+      { k:"D", t:"散落符文、似乎會自動亮起的魔法城路口" },
+    ]
+  },
+  {
+    id: 2,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4419.png",
+    text: "你抵達「月光嘉年華」，精靈拍著你的肩說：今晚要好好玩！你第一個想做的是？",
+    choices: [
+      { k:"A", t:"先到最熱鬧的大舞台，用最大能量加入狂歡" },
+      { k:"B", t:"先排固定時段的活動，抓住每日的節奏" },
+      { k:"C", t:"到處逛逛，哪裡熱鬧、心情到哪就去哪" },
+      { k:"D", t:"先巡一圈，決定要玩什麼再安排最佳順序" },
+    ]
+  },
+  {
+    id: 3,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4420.png",
+    text: "天氣突然驟變，大雪把道路封住。你會怎麼安頓這段時間？",
+    choices: [
+      { k:"A", t:"先把重要的物資集中起來，確保能撐一段時間" },
+      { k:"B", t:"維持每天基本作息與配給，不慌不忙" },
+      { k:"C", t:"看天氣是否好轉，再決定下一步" },
+      { k:"D", t:"同時啟動幾個臨時方案，互相備援" },
+    ]
+  },
+  {
+    id: 4,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4417.png",
+    text: "在山谷裡，一隻幼龍因興奮誤傷了你。你會怎麼處理？",
+    choices: [
+      { k:"A", t:"拿出最珍貴的療癒道具一次治好" },
+      { k:"B", t:"用每日的草藥配方規律處理" },
+      { k:"C", t:"等路過的藥商來時再處理" },
+      { k:"D", t:"多種療法一起用，降低風險" },
+    ]
+  },
+  {
+    id: 5,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4416.png",
+    text: "你收到「奧義工坊」的邀請，這是一個學習周期很長的地方，你會？",
+    choices: [
+      { k:"A", t:"一口氣投入，短期內把學分衝完" },
+      { k:"B", t:"排固定時段、規律前往" },
+      { k:"C", t:"看靈感，何時想學何時去" },
+      { k:"D", t:"依近期生活狀態調整課表" },
+    ]
+  },
+  {
+    id: 6,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4415.png",
+    text: "你的遠房侄女考進魔法學院，她羞澀地向你求助。你會？",
+    choices: [
+      { k:"A", t:"送她一件極稀有的神器一次搞定" },
+      { k:"B", t:"每月寄去基本的材料與書籍" },
+      { k:"C", t:"看她近期表現再決定是否支援" },
+      { k:"D", t:"協助她建立一個能反覆使用的小材料庫" },
+    ]
+  },
+  {
+    id: 7,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4414.png",
+    text: "半夜你被聲響驚醒，發現有盜賊偷走了部分物資，你怎麼處理接下來的日子？",
+    choices: [
+      { k:"A", t:"馬上用備存補足缺口" },
+      { k:"B", t:"調整每日使用量，一點點存回來" },
+      { k:"C", t:"等下週市集有折扣時一次補齊" },
+      { k:"D", t:"從朋友、交易所、臨時收集站多管道補回" },
+    ]
+  },
+  {
+    id: 8,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/IMG_4421.png",
+    text: "魔法市集今天的價格精靈開始調皮亂改價，你會怎麼買東西？",
+    choices: [
+      { k:"A", t:"把重要物品換成價值穩定的稀有晶石" },
+      { k:"B", t:"與店家簽固定價格協議" },
+      { k:"C", t:"觀察幾天，看哪天最划算再買" },
+      { k:"D", t:"同時在不同店家、不同地區分散採購" },
+    ]
+  },
+  {
+    id: 9,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/FDD3D9B4-5299-4E43-B3CE-99E1B4CE4ED3.png",
+    text: "占星師突然告訴你：你獲得了「延年祝福」，會活得比預期更久。你的直覺反應是？",
+    choices: [
+      { k:"A", t:"先準備更多資源才安心" },
+      { k:"B", t:"調整日常節奏，讓生活更平穩" },
+      { k:"C", t:"先觀察看看再說" },
+      { k:"D", t:"找到讓生活更耐久的多元方式" },
+    ]
+  },
+  {
+    id: 10,
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/29E7D810-3AB0-41BF-90D1-74F87B464806.png",
+    text: "你到達「四季邊境」，這裡的氣候與地形一直在變。你會怎麼配置你的居所？",
+    choices: [
+      { k:"A", t:"一次建好大型地窖，囤夠再說" },
+      { k:"B", t:"設定全年穩定供應的小屋配置" },
+      { k:"C", t:"建風晴雨三用棚，依季節調整" },
+      { k:"D", t:"小型基地分散在四季地帶彼此備援" },
+    ]
+  },
+];
+
+const results = {
+  A: {
+    title: "隱居型大魔法師",
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/358E41A5-AB3A-4731-ADBE-9CCF9651124C.png",
+    desc:
+`你很擅長「先把一大桶能量備齊」。
+優勢：踏實、抗風險初期能力強。
+可能盲點：若遇物價上升、大筆醫療、意外損失或壽命更長，一次性能量可能加速消耗。
+
+給你的觀念建議：
+你的基礎非常紮實；加分在於把部分大儲備，轉化為更穩定、可持續的生活補給。目標不是「撐多久」，而是「每個月都不用擔心生活從哪裡被補上」。`
+  },
+  B: {
+    title: "森林德魯伊",
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/F8E3888C-66FF-4D16-900F-AE0F7549E8D6.png",
+    desc:
+`你重視節奏與規律，懂得讓生活的補給定期生成。
+優勢：安心感足、易於長期規劃。
+可能盲點：固定流入若缺乏彈性，面對突發（醫療、家人需求、旅行學習）時可能緊繃。
+
+給你的觀念建議：
+你已非常接近理想狀態：穩定供給＋一定的彈性空間。
+建議預留一個「應急增量閥門」，在特殊月份能自動加大流量，讓生活照樣穩。`
+  },
+  C: {
+    title: "風行旅者",
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/D002E6A9-A075-401E-8044-815EEE708114.png",
+    desc:
+`你喜歡順勢而為，擅長把握機會，走到哪都能找到路。
+優勢：靈活、常有驚喜。
+可能盲點：當補給波動時，遇到長壽風險與突發支出，心理壓力較大。
+
+給你的觀念建議：
+你的敏捷很珍貴；下一步是增加「穩定的底層補給」，讓自由更可長可久。
+把波動來源視為加分，把穩定來源視為地基。`
+  },
+  D: {
+    title: "永續大賢者",
+    image: "https://raw.githubusercontent.com/Joanus/Game/refs/heads/main/3ADFE7ED-03CC-4EF2-98B2-45217A2C8EE9.png",
+    desc:
+`你知道長壽、醫療、意外、家人需求與娛樂都會發生，因此你多管齊下。
+優勢：可持續、可調節、抗風險。
+可能盲點：多元管道需要定期檢視，避免管理複雜。
+
+給你的觀念建議：
+你已非常接近理想型：穩定補給＋彈性增量，讓未來每個月都有「自動補上」。
+建議建立固定的「年度調整日」，把生活、娛樂、醫療與應急的流量重新校準。`
+  },
+};
+
+/** ========== STATE ========== **/
+const state = {
+  step: 0,                 // 0 = intro, 1..10 = question index, 99 = result
+  answers: [],             // store {qId, k}
+  score: { A:0, B:0, C:0, D:0 },
+  lastResult: null
+};
+
+const app = document.getElementById("app");
+const topPill = document.getElementById("topPill");
+
+/** ========== HELPERS ========== **/
+function setPill(text){
+  topPill.textContent = text;
+}
+
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+function computeResult(){
+  const s = state.score;
+  // find max
+  const entries = Object.entries(s);
+  entries.sort((a,b)=> b[1]-a[1]);
+  const best = entries[0][1];
+  const tied = entries.filter(e => e[1] === best).map(e=>e[0]);
+
+  // Tie-breaker: prefer D > C > B > A (more "永續/多元")
+  const order = ["D","C","B","A"];
+  const pick = order.find(k => tied.includes(k)) || tied[0];
+  state.lastResult = pick;
+  return pick;
+}
+
+function resetAll(){
+  state.step = 0;
+  state.answers = [];
+  state.score = { A:0, B:0, C:0, D:0 };
+  state.lastResult = null;
+  render();
+}
+
+function goToQuestion(n){
+  state.step = clamp(n, 1, questions.length);
+  render();
+}
+
+function answerCurrent(k){
+  const q = questions[state.step - 1];
+  // if already answered this question, remove previous
+  const existingIdx = state.answers.findIndex(a => a.qId === q.id);
+  if(existingIdx !== -1){
+    const prev = state.answers[existingIdx].k;
+    state.score[prev] = Math.max(0, state.score[prev]-1);
+    state.answers[existingIdx] = { qId:q.id, k };
+  }else{
+    state.answers.push({ qId:q.id, k });
+  }
+  state.score[k] += 1;
+
+  // next step
+  if(state.step >= questions.length){
+    state.step = 99;
+  }else{
+    state.step += 1;
+  }
+  render();
+}
+
+function back(){
+  if(state.step === 99){
+    state.step = questions.length;
+    render();
+    return;
+  }
+  if(state.step <= 1){
+    state.step = 0;
+    render();
+    return;
+  }
+  state.step -= 1;
+  render();
+}
+
+function getAnsweredChoice(qId){
+  const hit = state.answers.find(a => a.qId === qId);
+  return hit ? hit.k : null;
+}
+
+async function copyResultText(){
+  const k = state.lastResult || computeResult();
+  const r = results[k];
+  const text = `我的悠然王國職業是：${r.title}\n\n${r.desc}`;
+  try{
+    await navigator.clipboard.writeText(text);
+    alert("已複製結果文字到剪貼簿！");
+  }catch(e){
+    alert("此瀏覽器不支援自動複製，請手動選取。");
+  }
+}
+
+/** ========== RENDERERS ========== **/
+function renderIntro(){
+  setPill("準備開始");
+  app.innerHTML = `
+    <section class="card">
+      <div class="center">
+        <div class="h1">你在悠然王國<br/>會成為哪種職業？</div>
+        <p class="p">
+          這不是考試，也不是理財題。<br/>
+          只要憑直覺選擇，你會看到自己更偏向哪種「生活補給」方式。
+        </p>
+
+        <div class="badgeRow">
+          <span class="miniBadge">共 ${questions.length} 題</span>
+          <span class="miniBadge">每題約 5 秒</span>
+          <span class="miniBadge">不需輸入個資</span>
+        </div>
+
+        <div class="ctaRow">
+          <button class="ghost primary" onclick="goToQuestion(1)">開始占卜</button>
+        </div>
+
+        <div style="margin-top:12px" class="small">
+          小提醒：文字不會壓在圖片上，放心看圖～
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderQuestion(){
+  const idx = state.step - 1;
+  const q = questions[idx];
+  const answered = getAnsweredChoice(q.id);
+
+  setPill(`進度 ${state.step}/${questions.length}`);
+
+  const choiceHtml = q.choices.map(c => {
+    const picked = (answered === c.k);
+    const style = picked
+      ? `style="background: rgba(255,184,107,.22); border-color: rgba(255,184,107,.55)"`
+      : "";
+    return `
+      <button class="btn" ${style} onclick="answerCurrent('${c.k}')">
+        <span class="tag">${c.k}</span>${c.t}
+      </button>
+    `;
+  }).join("");
+
+  app.innerHTML = `
+    <section class="card">
+      <div class="hero">
+        <img src="${q.image}" alt="Q${q.id} 圖" loading="eager" />
+        <div class="fade"></div>
+      </div>
+
+      <div class="panel">
+        <div class="qmeta">
+          <div class="qnum">Q${q.id}</div>
+          <div class="progress">已選：${state.answers.length}/${questions.length}</div>
+        </div>
+        <div class="qtext">${q.text}</div>
+        <div class="choices">${choiceHtml}</div>
+      </div>
+
+      <div class="nav">
+        <div class="left">
+          <button class="ghost" onclick="back()">← 返回</button>
+        </div>
+        <div class="right">
+          <button class="ghost" onclick="resetAll()">重新開始</button>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderResult(){
+  const k = state.lastResult || computeResult();
+  const r = results[k];
+
+  setPill("結果揭曉");
+
+  // score preview
+  const s = state.score;
+  const scoreLine = `A ${s.A}｜B ${s.B}｜C ${s.C}｜D ${s.D}`;
+
+  app.innerHTML = `
+    <section class="card">
+      <div class="hero">
+        <img src="${r.image}" alt="結果：${r.title}" loading="eager" />
+        <div class="fade"></div>
+      </div>
+
+      <div class="panel">
+        <div class="qmeta">
+          <div class="qnum">你的職業</div>
+          <div class="progress">${scoreLine}</div>
+        </div>
+
+        <div class="qtext" style="margin-top:2px;">
+          ${r.title}
+        </div>
+
+        <div class="resultBox">
+          <h3>你呈現出來的風格</h3>
+          <p>${r.desc.replaceAll("\n","<br/>")}</p>
+        </div>
+
+        <div class="ctaRow" style="margin-top:14px;">
+          <button class="ghost primary" onclick="copyResultText()">複製結果文字</button>
+          <button class="ghost" onclick="resetAll()">再玩一次</button>
+        </div>
+
+        <div class="small" style="margin-top:10px; opacity:.78;">
+          想要更完整的延伸版本（加入結尾導語、分享卡、或結果頁「穩定補給」提醒語），我也可以直接幫你加到此頁。
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="left">
+          <button class="ghost" onclick="back()">← 回到最後一題</button>
+        </div>
+        <div class="right">
+          <button class="ghost" onclick="resetAll()">重新開始</button>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function render(){
+  if(state.step === 0) return renderIntro();
+  if(state.step === 99) return renderResult();
+  return renderQuestion();
+}
+
+/** ========== INIT ========== **/
+render();
+</script>
+</body>
+</html>
